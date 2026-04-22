@@ -1,0 +1,54 @@
+gov1,gov2,distance_km
+Ariana,Ben Arous,8
+Ariana,La Manouba,10
+Ariana,Tunis,6
+Ben Arous,La Manouba,12
+Ben Arous,Nabeul,90
+Ben Arous,Tunis,8
+Ben Arous,Zaghouan,50
+Bizerte,Jendouba,167
+Bizerte,La Manouba,98
+Béja,Bizerte,63
+Béja,Jendouba,147
+Béja,Le Kef,134
+Béja,Siliana,82
+Gabès,Gafsa,110
+Gabès,Kébili,79
+Gabès,Médenine,19
+Gabès,Sfax,85
+Gabès,Tataouine,117
+Gafsa,Kasserine,112
+Gafsa,Kébili,109
+Gafsa,Sidi Bouzid,176
+Gafsa,Tozeur,126
+Jendouba,Le Kef,80
+Jendouba,Siliana,32
+Kairouan,Kasserine,180
+Kairouan,Mahdia,54
+Kairouan,Monastir,91
+Kairouan,Sidi Bouzid,101
+Kairouan,Siliana,247
+Kairouan,Sousse,52
+Kairouan,Zaghouan,143
+Kasserine,Le Kef,260
+Kasserine,Sidi Bouzid,129
+Kasserine,Tozeur,32
+Kébili,Médenine,186
+Kébili,Tataouine,65
+Kébili,Tozeur,29
+La Manouba,Tunis,7
+La Manouba,Zaghouan,74
+Le Kef,Siliana,114
+Mahdia,Monastir,58
+Mahdia,Sfax,268
+Mahdia,Sousse,74
+Monastir,Sousse,27
+Médenine,Tataouine,101
+Nabeul,Tunis,97
+Nabeul,Zaghouan,95
+Sfax,Sidi Bouzid,137
+Sidi Bouzid,Tozeur,160
+Siliana,Sousse,218
+Siliana,Zaghouan,62
+Sousse,Zaghouan,75
+Tataouine,Tozeur,144
