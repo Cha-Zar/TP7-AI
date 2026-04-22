@@ -11,30 +11,35 @@ public class BFS {
         int iter = 0;
 
         queue.add(new ArrayList<>(List.of(start)));
-        visited.add(start);
 
         while (!queue.isEmpty()) {
             List<String> path = queue.poll();
             String cur = path.get(path.size()-1);
 
-            List<String> openLabels = new ArrayList<>();
-            for (List<String> p : queue) openLabels.add(p.get(p.size()-1));
-            steps.add(new SearchStep(iter++, cur, openLabels, new LinkedHashSet<>(visited)));
+            if (!visited.contains(cur)) {
+                visited.add(cur);
+            }
 
             if (cur.equals(goal)) {
                 int cost = pathCost(g, path);
+                List<String> openLabels = new ArrayList<>();
+                for (List<String> p : queue) openLabels.add(p.get(p.size()-1));
+                steps.add(new SearchStep(iter++, cur, openLabels, new LinkedHashSet<>(visited)));
                 return new SearchResult("BFS", path, cost, iter,
                                         System.currentTimeMillis()-t0, steps);
             }
 
             for (Edge e : g.neighbors(cur)) {
                 if (!visited.contains(e.target.name)) {
-                    visited.add(e.target.name);
                     List<String> np = new ArrayList<>(path);
                     np.add(e.target.name);
                     queue.add(np);
                 }
             }
+
+            List<String> openLabels = new ArrayList<>();
+            for (List<String> p : queue) openLabels.add(p.get(p.size()-1));
+            steps.add(new SearchStep(iter++, cur, openLabels, new LinkedHashSet<>(visited)));
         }
         return new SearchResult("BFS", iter, System.currentTimeMillis()-t0, steps);
     }

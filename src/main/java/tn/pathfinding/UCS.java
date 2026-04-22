@@ -24,13 +24,13 @@ public class UCS {
             if (closed.contains(n.city)) continue;
             closed.add(n.city);
 
-            List<String> openLabels = new ArrayList<>();
-            for (Node x : open) openLabels.add(x.city+"("+x.g+"km)");
-            steps.add(new SearchStep(iter++, n.city, openLabels, new LinkedHashSet<>(closed)));
-
-            if (n.city.equals(goal))
+            if (n.city.equals(goal)) {
+                List<String> openLabels = new ArrayList<>();
+                for (Node x : open) openLabels.add(x.city+"("+x.g+"km)");
+                steps.add(new SearchStep(iter++, n.city, openLabels, new LinkedHashSet<>(closed)));
                 return new SearchResult("UCS", n.path, n.g, iter,
                                         System.currentTimeMillis()-t0, steps);
+            }
 
             for (Edge e : g.neighbors(n.city)) {
                 int ng = n.g + e.distance;
@@ -41,6 +41,10 @@ public class UCS {
                     open.add(new Node(e.target.name, ng, np));
                 }
             }
+
+            List<String> openLabels = new ArrayList<>();
+            for (Node x : open) openLabels.add(x.city+"("+x.g+"km)");
+            steps.add(new SearchStep(iter++, n.city, openLabels, new LinkedHashSet<>(closed)));
         }
         return new SearchResult("UCS", iter, System.currentTimeMillis()-t0, steps);
     }

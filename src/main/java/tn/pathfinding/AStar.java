@@ -27,14 +27,15 @@ public class AStar {
             if (closed.contains(n.city)) continue;
             closed.add(n.city);
 
-            List<String> openLabels = new ArrayList<>();
-            for (Node x : open)
-                openLabels.add(String.format("%s(g=%d,f=%.0f)", x.city, x.g, x.f));
-            steps.add(new SearchStep(iter++, n.city, openLabels, new LinkedHashSet<>(closed)));
-
-            if (n.city.equals(goal))
+            if (n.city.equals(goal)) {
+                // Record the step before returning (with open/closed in final state)
+                List<String> openLabels = new ArrayList<>();
+                for (Node x : open)
+                    openLabels.add(String.format("%s(g=%d,f=%.0f)", x.city, x.g, x.f));
+                steps.add(new SearchStep(iter++, n.city, openLabels, new LinkedHashSet<>(closed)));
                 return new SearchResult("A*", n.path, n.g, iter,
                                         System.currentTimeMillis()-t0, steps);
+            }
 
             for (Edge e : g.neighbors(n.city)) {
                 if (closed.contains(e.target.name)) continue;
@@ -48,6 +49,12 @@ public class AStar {
                     open.add(new Node(e.target.name, ng, nf, np));
                 }
             }
+
+            // Now record the step after neighbors are added
+            List<String> openLabels = new ArrayList<>();
+            for (Node x : open)
+                openLabels.add(String.format("%s(g=%d,f=%.0f)", x.city, x.g, x.f));
+            steps.add(new SearchStep(iter++, n.city, openLabels, new LinkedHashSet<>(closed)));
         }
         return new SearchResult("A*", iter, System.currentTimeMillis()-t0, steps);
     }
