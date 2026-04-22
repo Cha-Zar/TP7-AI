@@ -28,7 +28,7 @@ public class BidirectionalAStar {
         City goalCity  = g.getCity(goal);
         int iter = 0;
  
-        // ── forward structures ──────────────────────────────────────────────
+        // ── forward structures 
         PriorityQueue<Node> fOpen   = new PriorityQueue<>();
         Map<String,Integer> fDist   = new HashMap<>();
         Map<String,String>  fPrev   = new HashMap<>();
@@ -52,7 +52,7 @@ public class BidirectionalAStar {
  
         while (!fOpen.isEmpty() && !bOpen.isEmpty()) {
  
-            // ── forward step ────────────────────────────────────────────────
+            // ── forward step ──
             Node fn = fOpen.poll();
             if (!fClosed.contains(fn.city)) {
                 fClosed.add(fn.city);
@@ -86,7 +86,7 @@ public class BidirectionalAStar {
                 }
             }
  
-            // ── backward step ───────────────────────────────────────────────
+            // ── backward step ─
             Node bn = bOpen.poll();
             if (!bClosed.contains(bn.city)) {
                 bClosed.add(bn.city);
@@ -120,7 +120,7 @@ public class BidirectionalAStar {
                 }
             }
  
-            // ── termination condition ────────────────────────────────────────
+            //termination condition
             double fBest = fOpen.isEmpty() ? Double.MAX_VALUE : fOpen.peek().f;
             double bBest = bOpen.isEmpty() ? Double.MAX_VALUE : bOpen.peek().f;
             if (meetFwd != null && fBest + bBest >= best) break;
@@ -135,7 +135,7 @@ public class BidirectionalAStar {
                                 System.currentTimeMillis()-t0, steps);
     }
  
-    // ── helpers ──────────────────────────────────────────────────────────────
+    //  helpers 
  
     private static void recordStep(List<SearchStep> steps, int iter,
                                    String current,

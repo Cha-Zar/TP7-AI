@@ -191,7 +191,7 @@ public class MainApp extends Application {
         String[][] algos = {
             {"BFS","bfs"},  {"DFS","dfs"},
             {"UCS","ucs"},  {"Best-First","bestfirst"},
-            {"Bidir A*","bidir"}
+            {"A*","astar"},  {"Bidir A*","bidir"}
         };
         GridPane grid = new GridPane();
         grid.setHgap(6); grid.setVgap(6);
@@ -363,6 +363,7 @@ public class MainApp extends Application {
             case "dfs"       -> DFS.search(graph, s, g);
             case "ucs"       -> UCS.search(graph, s, g);
             case "bestfirst" -> BestFirst.search(graph, s, g, haversine);
+            case "astar"     -> AStar.search(graph, s, g, haversine);
             case "bidir"     -> BidirectionalAStar.search(graph, s, g, haversine);
             default          -> BFS.search(graph, s, g);
         };
