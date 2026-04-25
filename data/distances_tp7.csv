@@ -1,0 +1,8 @@
+VilleA,VilleB,Distance_km,Note
+Tunis,Sousse,140,Autoroute A1
+Tunis,Kairouan,160,GP3
+Sousse,Kairouan,90,MC82
+Sousse,Sfax,130,Autoroute A1
+Kairouan,Gafsa,200,GP3
+Sfax,Gafsa,150,GP14
+Gafsa,Tozeur,90,GP3

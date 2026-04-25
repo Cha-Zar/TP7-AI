@@ -9,9 +9,20 @@ public class CSVLoader {
     public static Graph loadGraph(String dataFolder) throws IOException {
         Graph g = new Graph();
 
+        // Choix des fichiers selon mode TP7 ou non
+        String citiesFile = "cities.csv";
+        String distancesFile = "distances.csv";
+        String folder = dataFolder;
+        if (MainApp.useTP7Static()) {
+            citiesFile = "cities_tp7.csv";
+            distancesFile = "distances_tp7.csv";
+            folder = "data"; // Toujours lire dans data/
+        }
+
         // cities
-        try (BufferedReader r = open(dataFolder, "cities.csv")) {
-            String line = r.readLine(); // header
+        try (BufferedReader r = open(folder, citiesFile)) {
+            String header = r.readLine(); // header
+            String line;
             while ((line = r.readLine()) != null) {
                 line = line.trim();
                 if (line.isEmpty()) continue;
@@ -23,7 +34,7 @@ public class CSVLoader {
         }
 
         // edges
-        try (BufferedReader r = open(dataFolder, "distances.csv")) {
+        try (BufferedReader r = open(folder, distancesFile)) {
             String line = r.readLine(); // header
             while ((line = r.readLine()) != null) {
                 line = line.trim();
@@ -41,15 +52,23 @@ public class CSVLoader {
     public static ManualHeuristic loadManualHeuristic(String dataFolder)
             throws IOException {
         ManualHeuristic mh = new ManualHeuristic();
-        try (BufferedReader r = open(dataFolder, "heuristics.csv")) {
-            String line = r.readLine(); // header
+        String heuristicsFile = MainApp.useTP7Static() ? "heuristics_tp7.csv" : "heuristics.csv";
+        String heuristicsFolder = MainApp.useTP7Static() ? "data" : dataFolder;
+        try (BufferedReader r = open(heuristicsFolder, heuristicsFile)) {
+            String header = r.readLine();
+            boolean isTP7 = header.toLowerCase().contains("h_km");
+            String line;
             while ((line = r.readLine()) != null) {
                 line = line.trim();
                 if (line.isEmpty()) continue;
                 String[] p = line.split(",");
-                mh.loadCoords(p[0].trim(),
-                              Double.parseDouble(p[1].trim()),
-                              Double.parseDouble(p[2].trim()));
+                if (isTP7) {
+                    mh.loadHeuristicValue(p[0].trim(), Double.parseDouble(p[1].trim()));
+                } else {
+                    mh.loadCoords(p[0].trim(),
+                                 Double.parseDouble(p[1].trim()),
+                                 Double.parseDouble(p[2].trim()));
+                }
             }
         }
         return mh;

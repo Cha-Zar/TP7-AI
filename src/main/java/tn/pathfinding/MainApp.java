@@ -1,5 +1,5 @@
 package tn.pathfinding;
- 
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -14,8 +14,14 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
- 
+
 public class MainApp extends Application {
+    private static MainApp instance;
+    public static boolean useTP7Static() {
+        return instance != null && instance.useTP7;
+    }
+    private String dataFolder = "data";
+    private boolean useTP7 = false;
  
     //  Interface themes — UI panels/controls only; map is always LIGHT 
     enum InterfaceTheme {
@@ -83,9 +89,11 @@ public class MainApp extends Application {
     //  Fields 
     private Graph              graph;
     private HaversineHeuristic haversine = new HaversineHeuristic();
+    private ManualHeuristic manualHeuristic;
  
     private MapCanvas            mapCanvas;
     private ComboBox<String>     cmbStart, cmbGoal;
+    private boolean autoRunTP7 = false;
     private ToggleGroup          algoGroup    = new ToggleGroup();
     private ToggleGroup          heurGroup    = new ToggleGroup();
     private ToggleGroup          ifThemeGroup = new ToggleGroup();
@@ -105,21 +113,40 @@ public class MainApp extends Application {
     //  Lifecycle 
     @Override
     public void start(Stage stage) throws Exception {
-        graph     = CSVLoader.loadGraph("data");
+        instance = this;
+        // Show dialog before loading data
+        ChoiceDialog<String> dialog = new ChoiceDialog<>("Complète", Arrays.asList("Complète", "TP7 (Tunis-Tozeur)"));
+        dialog.setTitle("Choix du graphe");
+        dialog.setHeaderText("Quelle version du graphe voulez-vous utiliser ?");
+        dialog.setContentText("Sélectionnez la version :");
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent() && result.get().contains("TP7")) {
+            dataFolder = "data/tp7";
+            useTP7 = true;
+            autoRunTP7 = true;
+        } else {
+            dataFolder = "data";
+            useTP7 = false;
+            autoRunTP7 = false;
+        }
+
+        // Charger le graphe selon le choix
+        graph     = CSVLoader.loadGraph(dataFolder);
+        manualHeuristic = CSVLoader.loadManualHeuristic(dataFolder);
         mapCanvas = new MapCanvas(760, 900);
         mapCanvas.setGraph(graph);
         mapCanvas.setOnCityClick(this::handleCityClick);
- 
+
         BorderPane root = new BorderPane();
         root.setLeft(buildLeftPanel());
         root.setCenter(buildMapArea());
         root.setRight(buildStepPanel());
         root.setBottom(buildResultBar());
         root.setTop(buildHeader());
- 
+
         scene = new Scene(root, 1280, 820);
         applyInterfaceTheme(InterfaceTheme.DARK);
- 
+
         stage.setTitle("Tunisia Pathfinding");
         stage.setScene(scene);
         stage.show();
@@ -209,13 +236,26 @@ public class MainApp extends Application {
         VBox box = new VBox(6);
         List<String> names = new ArrayList<>(graph.getCityNames());
         Collections.sort(names);
- 
+
+        if (useTP7) {
+            names.clear();
+            names.add("Tunis");
+            names.add("Tozeur");
+        }
+
         cmbStart = styledCombo(names, "Select or click map");
         cmbGoal  = styledCombo(names, "Select or click map");
- 
+
         cmbStart.setOnAction(e -> { mapCanvas.setStart(cmbStart.getValue()); clickPhase = "goal";  });
         cmbGoal .setOnAction(e -> { mapCanvas.setGoal (cmbGoal .getValue()); clickPhase = "start"; });
- 
+
+        if (useTP7) {
+            cmbStart.setValue("Tunis");
+            cmbGoal.setValue("Tozeur");
+            cmbStart.setDisable(true);
+            cmbGoal.setDisable(true);
+        }
+
         box.getChildren().addAll(sub("START"), cmbStart, sub("DESTINATION"), cmbGoal);
         return box;
     }
@@ -223,12 +263,30 @@ public class MainApp extends Application {
     private VBox buildHeuristicSection() {
         VBox box = new VBox(6);
         RadioButton rbHav = heurBtn("Haversine (GPS)", "haversine");
+        RadioButton rbManual = heurBtn("Manuelle (TP7)", "manual");
         rbHav.setSelected(true);
-        Label note = new Label("(used for Best-First, Bidir-A*)");
+        ToggleGroup group = heurGroup;
+        rbHav.setToggleGroup(group);
+        rbManual.setToggleGroup(group);
+
+        Label note = new Label("(utilisé pour Best-First, Bidir-A*)");
         note.getStyleClass().add("if-sub");
         note.setStyle("-fx-font-size:9px;-fx-font-family:'IBM Plex Mono';");
         note.setWrapText(true);
-        box.getChildren().addAll(rbHav, note);
+
+        if (useTP7) {
+            box.getChildren().addAll(rbHav, rbManual, note);
+        } else {
+            box.getChildren().addAll(rbHav, note);
+        }
+
+        // Si TP7, lancer la recherche automatiquement après le choix de l'algo
+        if (autoRunTP7) {
+            algoGroup.selectedToggleProperty().addListener((obs, oldT, newT) -> {
+                if (newT != null) Platform.runLater(this::runSearch);
+            });
+        }
+
         return box;
     }
  
@@ -358,13 +416,16 @@ public class MainApp extends Application {
         if (s == null || s.isEmpty() || g == null || g.isEmpty() || s.equals(g)) return;
  
         String algo = getSelectedAlgo();
+        Heuristic heur = haversine;
+        Toggle t = heurGroup.getSelectedToggle();
+        if (t != null && "manual".equals(t.getUserData())) heur = manualHeuristic;
         SearchResult r = switch (algo) {
             case "bfs"       -> BFS.search(graph, s, g);
             case "dfs"       -> DFS.search(graph, s, g);
             case "ucs"       -> UCS.search(graph, s, g);
-            case "bestfirst" -> BestFirst.search(graph, s, g, haversine);
-            case "astar"     -> AStar.search(graph, s, g, haversine);
-            case "bidir"     -> BidirectionalAStar.search(graph, s, g, haversine);
+            case "bestfirst" -> BestFirst.search(graph, s, g, heur);
+            case "astar"     -> AStar.search(graph, s, g, heur);
+            case "bidir"     -> BidirectionalAStar.search(graph, s, g, heur);
             default          -> BFS.search(graph, s, g);
         };
  
