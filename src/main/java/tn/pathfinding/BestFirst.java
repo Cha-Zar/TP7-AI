@@ -29,7 +29,7 @@ public class BestFirst {
                 int cost = BFS.pathCost(g, n.path);
                 List<String> openLabels = new ArrayList<>();
                 for (Node x : open) openLabels.add(String.format("%s(h=%.0f)", x.city, x.h));
-                steps.add(new SearchStep(iter++, n.city, openLabels, new LinkedHashSet<>(closed)));
+                steps.add(new SearchStep(iter++, n.city, String.format("h=%.0f", n.h), openLabels, new LinkedHashSet<>(closed)));
                 return new SearchResult("Best-First", n.path, cost, iter,
                                         System.currentTimeMillis()-t0, steps);
             }
@@ -45,7 +45,7 @@ public class BestFirst {
 
             List<String> openLabels = new ArrayList<>();
             for (Node x : open) openLabels.add(String.format("%s(h=%.0f)", x.city, x.h));
-            steps.add(new SearchStep(iter++, n.city, openLabels, new LinkedHashSet<>(closed)));
+            steps.add(new SearchStep(iter++, n.city, String.format("h=%.0f", n.h), openLabels, new LinkedHashSet<>(closed)));
         }
         return new SearchResult("Best-First", iter, System.currentTimeMillis()-t0, steps);
     }

@@ -32,7 +32,8 @@ public class AStar {
                 List<String> openLabels = new ArrayList<>();
                 for (Node x : open)
                     openLabels.add(String.format("%s(g=%d,f=%.0f)", x.city, x.g, x.f));
-                steps.add(new SearchStep(iter++, n.city, openLabels, new LinkedHashSet<>(closed)));
+                String details = String.format("g=%d h=%.0f f=%.0f", n.g, n.f - n.g, n.f);
+                steps.add(new SearchStep(iter++, n.city, details, openLabels, new LinkedHashSet<>(closed)));
                 return new SearchResult("A*", n.path, n.g, iter,
                                         System.currentTimeMillis()-t0, steps);
             }
@@ -54,7 +55,8 @@ public class AStar {
             List<String> openLabels = new ArrayList<>();
             for (Node x : open)
                 openLabels.add(String.format("%s(g=%d,f=%.0f)", x.city, x.g, x.f));
-            steps.add(new SearchStep(iter++, n.city, openLabels, new LinkedHashSet<>(closed)));
+            String details = String.format("g=%d h=%.0f f=%.0f", n.g, n.f - n.g, n.f);
+            steps.add(new SearchStep(iter++, n.city, details, openLabels, new LinkedHashSet<>(closed)));
         }
         return new SearchResult("A*", iter, System.currentTimeMillis()-t0, steps);
     }

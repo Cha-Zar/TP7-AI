@@ -1,7 +1,9 @@
 Ville,h_km,Justification
 Tunis,400,"Nord-est, très éloignée de Tozeur"
 Sousse,300,"Côte est, au sud de Tunis"
+El Kef,320,"Nord-ouest, région nord"
 Kairouan,250,"Centre du pays"
 Sfax,230,"Côte est, région centre-sud"
+Gabes,180,"Côte est, région sud"
 Gafsa,100,"Proche du bassin saharien"
 Tozeur,0,"Destination — h = 0 par définition"

@@ -27,7 +27,7 @@ public class UCS {
             if (n.city.equals(goal)) {
                 List<String> openLabels = new ArrayList<>();
                 for (Node x : open) openLabels.add(x.city+"("+x.g+"km)");
-                steps.add(new SearchStep(iter++, n.city, openLabels, new LinkedHashSet<>(closed)));
+                steps.add(new SearchStep(iter++, n.city, "g=" + n.g, openLabels, new LinkedHashSet<>(closed)));
                 return new SearchResult("UCS", n.path, n.g, iter,
                                         System.currentTimeMillis()-t0, steps);
             }
@@ -44,7 +44,7 @@ public class UCS {
 
             List<String> openLabels = new ArrayList<>();
             for (Node x : open) openLabels.add(x.city+"("+x.g+"km)");
-            steps.add(new SearchStep(iter++, n.city, openLabels, new LinkedHashSet<>(closed)));
+            steps.add(new SearchStep(iter++, n.city, "g=" + n.g, openLabels, new LinkedHashSet<>(closed)));
         }
         return new SearchResult("UCS", iter, System.currentTimeMillis()-t0, steps);
     }

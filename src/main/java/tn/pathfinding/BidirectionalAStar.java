@@ -28,13 +28,13 @@ public class BidirectionalAStar {
         City goalCity  = g.getCity(goal);
         int iter = 0;
  
-        // ── forward structures 
+        //  forward structures 
         PriorityQueue<Node> fOpen   = new PriorityQueue<>();
         Map<String,Integer> fDist   = new HashMap<>();
         Map<String,String>  fPrev   = new HashMap<>();
         Set<String>         fClosed = new LinkedHashSet<>();
  
-        // ── backward structures ─────────────────────────────────────────────
+        // backward structures 
         PriorityQueue<Node> bOpen   = new PriorityQueue<>();
         Map<String,Integer> bDist   = new HashMap<>();
         Map<String,String>  bPrev   = new HashMap<>();
@@ -52,13 +52,14 @@ public class BidirectionalAStar {
  
         while (!fOpen.isEmpty() && !bOpen.isEmpty()) {
  
-            // ── forward step ──
+            //  forward step 
             Node fn = fOpen.poll();
             if (!fClosed.contains(fn.city)) {
                 fClosed.add(fn.city);
                 if (fn.parent != null) fPrev.put(fn.city, fn.parent);
  
                 recordStep(steps, iter++, "[F] " + fn.city,
+                           String.format("g=%d h=%.0f f=%.0f", fn.g, fn.f - fn.g, fn.f),
                            fOpen, bOpen, fClosed, bClosed);
  
                 for (Edge e : g.neighbors(fn.city)) {
@@ -93,6 +94,7 @@ public class BidirectionalAStar {
                 if (bn.parent != null) bPrev.put(bn.city, bn.parent);
  
                 recordStep(steps, iter++, "[B] " + bn.city,
+                           String.format("g=%d h=%.0f f=%.0f", bn.g, bn.f - bn.g, bn.f),
                            fOpen, bOpen, fClosed, bClosed);
  
                 for (Edge e : g.neighbors(bn.city)) {
@@ -139,6 +141,7 @@ public class BidirectionalAStar {
  
     private static void recordStep(List<SearchStep> steps, int iter,
                                    String current,
+                                   String currentDetails,
                                    PriorityQueue<Node> fOpen,
                                    PriorityQueue<Node> bOpen,
                                    Set<String> fClosed, Set<String> bClosed) {
@@ -147,7 +150,7 @@ public class BidirectionalAStar {
         for (Node n : bOpen) openLabels.add("B:" + n.city);
         Set<String> allClosed = new LinkedHashSet<>(fClosed);
         allClosed.addAll(bClosed);
-        steps.add(new SearchStep(iter, current, openLabels, allClosed));
+        steps.add(new SearchStep(iter, current, currentDetails, openLabels, allClosed));
     }
  
     /**

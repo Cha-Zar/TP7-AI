@@ -24,7 +24,7 @@ public class DFS {
                 int cost = BFS.pathCost(g, path);
                 List<String> openLabels = new ArrayList<>();
                 for (List<String> p : stack) openLabels.add(p.get(p.size()-1));
-                steps.add(new SearchStep(iter++, cur, openLabels, new LinkedHashSet<>(visited)));
+                steps.add(new SearchStep(iter++, cur, "profondeur=" + (path.size() - 1), openLabels, new LinkedHashSet<>(visited)));
                 return new SearchResult("DFS", path, cost, iter,
                                         System.currentTimeMillis()-t0, steps);
             }
@@ -39,7 +39,7 @@ public class DFS {
 
             List<String> openLabels = new ArrayList<>();
             for (List<String> p : stack) openLabels.add(p.get(p.size()-1));
-            steps.add(new SearchStep(iter++, cur, openLabels, new LinkedHashSet<>(visited)));
+            steps.add(new SearchStep(iter++, cur, "profondeur=" + (path.size() - 1), openLabels, new LinkedHashSet<>(visited)));
         }
         return new SearchResult("DFS", iter, System.currentTimeMillis()-t0, steps);
     }
